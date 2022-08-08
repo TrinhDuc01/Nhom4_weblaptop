@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SanphamController;
 use App\Http\Controllers\DanhmucsanphamController;
+use App\Http\Controllers\dangki;
+use App\Http\Controllers\dangnhap;
+use App\Http\Controllers\GioHang;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,12 +19,23 @@ use App\Http\Controllers\DanhmucsanphamController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('trangchu');
 });
 
 Auth::routes();
 
+// Đăng nhập khách hàng
+Route::get('/dangnhap',[dangnhap::class,'getForm']);
+Route::post('/dangnhap',[dangnhap::class,'login'])->name('dangnhap');
+// Đăng kí
+Route::get('/dangki','App\Http\Controllers\dangki@index')->name('dangki');
+Route::post('/dangki','App\Http\Controllers\dangki@kiemtra');
+
+
+// Giỏ hàng
+Route::resource('/giohang', GioHang::class);
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::resource('/danhmuc', DanhmucsanphamController::class);
-Route::resource('/sanpham', SanphamController::class);
+Route::resource('/admin/danhmuc', DanhmucsanphamController::class);
+Route::resource('/admin/sanpham', SanphamController::class);
