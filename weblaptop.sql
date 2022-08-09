@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 07, 2022 lúc 04:39 PM
+-- Thời gian đã tạo: Th8 08, 2022 lúc 10:42 PM
 -- Phiên bản máy phục vụ: 10.4.24-MariaDB
 -- Phiên bản PHP: 7.4.29
 
@@ -24,26 +24,23 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `admin`
+-- Cấu trúc bảng cho bảng `admins`
 --
 
-CREATE TABLE `admin` (
+CREATE TABLE `admins` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `account` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `admin`
+-- Đang đổ dữ liệu cho bảng `admins`
 --
 
-INSERT INTO `admin` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Trịnh Công Đức', 'tocduc237@gmail.com', NULL, '$2y$10$GLLqhRHJqVAjcfpndvKdxOgTtrEmsNwAoENkSnjg23DoxNDoKcUHK', '3medgO01DEDV4fzo4NFt07On124ec9bfmBuNDv9kXQKd0OmU446TuUBSaMG2', '2022-08-06 09:53:27', '2022-08-06 09:53:27');
+INSERT INTO `admins` (`id`, `account`, `password`, `created_at`, `updated_at`) VALUES
+(1, 'duc', '$2y$10$.s74jd4lRBvscP8jSnQgLeZ.UZ5QelLMT6YnyV7vIS9X0m7tV2yJe', '2022-08-08 10:43:46', '2022-08-08 10:43:46');
 
 -- --------------------------------------------------------
 
@@ -101,10 +98,11 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(4, '2014_10_12_000000_create_users_table', 1),
-(5, '2014_10_12_100000_create_password_resets_table', 1),
-(6, '2019_08_19_000000_create_failed_jobs_table', 1),
-(7, '2019_12_14_000001_create_personal_access_tokens_table', 1);
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_resets_table', 1),
+(3, '2019_08_19_000000_create_failed_jobs_table', 1),
+(4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(5, '2022_08_08_173436_create_admins_table', 1);
 
 -- --------------------------------------------------------
 
@@ -161,22 +159,40 @@ INSERT INTO `sanpham` (`id`, `tensanpham`, `slug_sanpham`, `mota`, `hinhanh`, `d
 (5, 'Laptop hp 1102', 'laptop-hp-1102', 'ok', 'laptopdell132.jpg', 9, 0),
 (7, 'Laptop asus', 'laptop-asus', 'aaa', 'laptopasus167.jpg', 3, 0);
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'Trịnh Công Đức', 'tocduc237@gmail.com', NULL, '$2y$10$ZNwn96aHgZaMrqSN2qmbKuX5cgIpthBBHUuqfqKJ7Y0dSBPx9s5rC', NULL, '2022-08-08 11:07:26', '2022-08-08 11:07:26');
+
 --
 -- Chỉ mục cho các bảng đã đổ
 --
 
 --
--- Chỉ mục cho bảng `admin`
+-- Chỉ mục cho bảng `admins`
 --
-ALTER TABLE `admin`
+ALTER TABLE `admins`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`);
-
---
--- Chỉ mục cho bảng `danhmuc`
---
-ALTER TABLE `danhmuc`
-  ADD PRIMARY KEY (`id`);
+  ADD UNIQUE KEY `admins_account_unique` (`account`);
 
 --
 -- Chỉ mục cho bảng `failed_jobs`
@@ -206,27 +222,21 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
--- Chỉ mục cho bảng `sanpham`
+-- Chỉ mục cho bảng `users`
 --
-ALTER TABLE `sanpham`
+ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `danhmuc_id` (`danhmuc_id`);
+  ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
 --
--- AUTO_INCREMENT cho bảng `admin`
+-- AUTO_INCREMENT cho bảng `admins`
 --
-ALTER TABLE `admin`
+ALTER TABLE `admins`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT cho bảng `danhmuc`
---
-ALTER TABLE `danhmuc`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `failed_jobs`
@@ -238,7 +248,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT cho bảng `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `personal_access_tokens`
@@ -247,10 +257,10 @@ ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `sanpham`
+-- AUTO_INCREMENT cho bảng `users`
 --
-ALTER TABLE `sanpham`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

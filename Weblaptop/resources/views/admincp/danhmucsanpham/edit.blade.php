@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layoutsadmin.app')
 
 @section('content')
 
-@include('layouts.navadmin')
+@include('layoutsadmin.navadmin')
 
 <div class="container">
     <div class="row justify-content-center">

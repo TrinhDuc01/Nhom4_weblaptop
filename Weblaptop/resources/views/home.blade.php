@@ -1,7 +1,5 @@
-@extends('layouts.app')
+@extends('layoutscustomer.app')
 
 @section('content')
-
-@include('layouts.navadmin')
 
 @endsection

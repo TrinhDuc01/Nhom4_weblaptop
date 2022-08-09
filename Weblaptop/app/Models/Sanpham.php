@@ -10,7 +10,7 @@ class Sanpham extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        'tensanpham,','slug_sanpham,','mota','danhmuc_id','hinhanh','kichhoat',
+        'tensanpham,','slug_sanpham,','mota','danhmuc_id','hinhanh','dongia','soluong','kichhoat',
     ];
     protected $primaryKey = 'id';
     protected $table = 'sanpham';

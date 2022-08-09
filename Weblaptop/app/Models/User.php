@@ -14,9 +14,6 @@ class User extends Authenticatable
 
 
 
-    //MODEL CỦA ADMIN
-
-
 
 
 
@@ -49,5 +46,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    protected $table = 'admin';
 }

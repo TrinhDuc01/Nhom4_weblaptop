@@ -15,8 +15,18 @@ class SanphamController extends Controller
      */
     public function index()
     {
-        $sanpham = Sanpham::with('Danhmucsanpham')->orderBy('id','DESC')->get();
-        return view('admincp.sanpham.index')->with(compact('sanpham'));
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            //trang danh sach san pham
+            $sanpham = Sanpham::with('Danhmucsanpham')->orderBy('id','DESC')->get();
+            return view('admincp.sanpham.index')->with(compact('sanpham'));
+        }
+        else{
+            return view('admincp.loginadmin');
+        }
+
+        
     }
 
     /**
@@ -26,8 +36,19 @@ class SanphamController extends Controller
      */
     public function create()
     {
-        $danhmucsanpham = Danhmucsanpham::orderBy('id','DESC')->get();
-        return view('admincp.sanpham.create')->with(compact('danhmucsanpham'));
+
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            //them san pham
+            $danhmucsanpham = Danhmucsanpham::orderBy('id','DESC')->get();
+            return view('admincp.sanpham.create')->with(compact('danhmucsanpham'));
+        }
+        else{
+            return view('admincp.loginadmin');
+        }
+
+        
     }
 
     /**
@@ -38,44 +59,58 @@ class SanphamController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'tensanpham' => 'required|unique:sanpham|max:255',
-            'slug_sanpham' => 'required|unique:sanpham|max:255',
-            'mota' => 'required',
-            'hinhanh' => 'required|max:255',
-            'kichhoat' => 'required',
-            'danhmuc_id' => 'required',
-        ],
-        [
-            'tensanpham.unique'=> 'Tên sản phẩm đã có rồi! Điền tên khác',
-            'slug_sanpham.unique'=> 'Slug sản phẩm đã có rồi! Điền slug khác',
-            'slug_sanpham.required' => 'slug sản phẩm phải có',
-            'tensanpham.required' => 'Tên sản phẩm phải có',
-            'hinhanh.required' => 'Hình ảnh sản phẩm phải có',
-            'mota.required' => 'Mô tả phải có',
-            'danhmuc_id.required' => 'Danh mục phải có',
-        ]
-        );
-        $sanpham = new Sanpham();
-        $sanpham->tensanpham = $data['tensanpham'];
-        $sanpham->slug_sanpham = $data['slug_sanpham'];
-        $sanpham->mota = $data['mota'];
-        $sanpham->danhmuc_id = $data['danhmuc_id'];
-        $sanpham->kichhoat = $data['kichhoat'];
 
-        //them hinh anh
-        $get_image = $request->hinhanh;
-        $path = 'public/upload/sanpham/';
-        $get_name_image = $get_image->getClientOriginalName();
-        $name_image = current(explode('.',$get_name_image));
-        $new_image = $name_image.rand(0,99).'.'.$get_image->getClientOriginalExtension();
-        $get_image ->move($path,$new_image);
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            //them san pham
+            $data = $request->validate([
+                'tensanpham' => 'required|unique:sanpham|max:255',
+                'slug_sanpham' => 'required|unique:sanpham|max:255',
+                'mota' => 'required',
+                'soluong' => 'required',
+                'dongia' => 'required',
+                'hinhanh' => 'required|max:255',
+                'kichhoat' => 'required',
+                'danhmuc_id' => 'required',
+            ],
+            [
+                'tensanpham.unique'=> 'Tên sản phẩm đã có rồi! Điền tên khác',
+                'slug_sanpham.unique'=> 'Slug sản phẩm đã có rồi! Điền slug khác',
+                'slug_sanpham.required' => 'slug sản phẩm phải có',
+                'tensanpham.required' => 'Tên sản phẩm phải có',
+                'hinhanh.required' => 'Hình ảnh sản phẩm phải có',
+                'mota.required' => 'Mô tả phải có',
+                'danhmuc_id.required' => 'Danh mục phải có',
+            ]
+            );
+            $sanpham = new Sanpham();
+            $sanpham->tensanpham = $data['tensanpham'];
+            $sanpham->slug_sanpham = $data['slug_sanpham'];
+            $sanpham->mota = $data['mota'];
+            $sanpham->soluong = $data['soluong'];
+            $sanpham->dongia = $data['dongia'];
+            $sanpham->danhmuc_id = $data['danhmuc_id'];
+            $sanpham->kichhoat = $data['kichhoat'];
 
-        $sanpham->hinhanh = $new_image;
+            //them hinh anh
+            $get_image = $request->hinhanh;
+            $path = 'public/upload/sanpham/';
+            $get_name_image = $get_image->getClientOriginalName();
+            $name_image = current(explode('.',$get_name_image));
+            $new_image = $name_image.rand(0,99).'.'.$get_image->getClientOriginalExtension();
+            $get_image ->move($path,$new_image);
+
+            $sanpham->hinhanh = $new_image;
 
 
-        $sanpham->save();
-        return redirect()->back()->with('status','Thêm sản phẩm thành công');
+            $sanpham->save();
+            return redirect()->back()->with('status','Thêm sản phẩm thành công');
+        }
+        else{
+            return view('admincp.loginadmin');
+        }
+        
     }
 
     /**
@@ -89,13 +124,23 @@ class SanphamController extends Controller
     // bị lỗi route đến destroy nên để vào đây dù gì cũng không dùng
     public function show($id)
     {
-        $sanpham = Sanpham::find($id);
-        $path = 'public/upload/sanpham/';
-        if($sanpham->hinhanh != NULL){
-            unlink($path.$sanpham->hinhanh);
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            //xoa sp
+            $sanpham = Sanpham::find($id);
+            $path = 'public/upload/sanpham/';
+            if($sanpham->hinhanh != NULL){
+                unlink($path.$sanpham->hinhanh);
+            }
+            $sanpham->delete();
+            return redirect()->back()->with('status','Thêm sản phẩm thành công');
         }
-        $sanpham->delete();
-        return redirect()->back()->with('status','Thêm sản phẩm thành công');
+        else{
+            return view('admincp.loginadmin');
+        }
+
+        
     }
 
     /**
@@ -107,9 +152,18 @@ class SanphamController extends Controller
 
     public function edit($id)
     {
-        $danhmucsanpham = Danhmucsanpham::orderBy('id','DESC')->get();
-        $sanpham = Sanpham::find($id);
-        return view('admincp.sanpham.edit')->with(compact('sanpham','danhmucsanpham'));
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            $danhmucsanpham = Danhmucsanpham::orderBy('id','DESC')->get();
+            $sanpham = Sanpham::find($id);
+            return view('admincp.sanpham.edit')->with(compact('sanpham','danhmucsanpham'));
+        }
+        else{
+            return view('admincp.loginadmin');
+        }
+
+        
     }
 
     /**
@@ -121,44 +175,57 @@ class SanphamController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->validate([
-            'tensanpham' => 'required|max:255',
-            'slug_sanpham' => 'required|max:255',
-            'mota' => 'required',
-            'kichhoat' => 'required',
-            'danhmuc_id' => 'required',
-        ],
-        [
-            'slug_sanpham.required' => 'slug sản phẩm phải có',
-            'tensanpham.required' => 'Tên sản phẩm phải có',
-            'mota.required' => 'Mô tả phải có',
-            'danhmuc_id.required' => 'Danh mục phải có',
-        ]
-        );
-        $sanpham = Sanpham::find($id);
-        $sanpham->tensanpham = $data['tensanpham'];
-        $sanpham->slug_sanpham = $data['slug_sanpham'];
-        $sanpham->mota = $data['mota'];
-        $sanpham->danhmuc_id = $data['danhmuc_id'];
-        $sanpham->kichhoat = $data['kichhoat'];
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            //sua san pham
+            $data = $request->validate([
+                'tensanpham' => 'required|max:255',
+                'slug_sanpham' => 'required|max:255',
+                'mota' => 'required',
+                'soluong' => 'required',
+                'dongia' => 'required',
+                'kichhoat' => 'required',
+                'danhmuc_id' => 'required',
+            ],
+            [
+                'slug_sanpham.required' => 'slug sản phẩm phải có',
+                'tensanpham.required' => 'Tên sản phẩm phải có',
+                'mota.required' => 'Mô tả phải có',
+                'danhmuc_id.required' => 'Danh mục phải có',
+            ]
+            );
+            $sanpham = Sanpham::find($id);
+            $sanpham->tensanpham = $data['tensanpham'];
+            $sanpham->slug_sanpham = $data['slug_sanpham'];
+            $sanpham->mota = $data['mota'];
+            $sanpham->soluong = $data['soluong'];
+            $sanpham->dongia = $data['dongia'];
+            $sanpham->danhmuc_id = $data['danhmuc_id'];
+            $sanpham->kichhoat = $data['kichhoat'];
 
-        //them hinh anh
-        $get_image = $request->hinhanh;
-        if($get_image){
-        $path = 'public/upload/sanpham/';
-        if($sanpham->hinhanh != NULL){
-            unlink($path.$sanpham->hinhanh);
-        }
-        $get_name_image = $get_image->getClientOriginalName();
-        $name_image = current(explode('.',$get_name_image));
-        $new_image = $name_image.rand(0,99).'.'.$get_image->getClientOriginalExtension();
-        $get_image ->move($path,$new_image);
+            //them hinh anh
+            $get_image = $request->hinhanh;
+            if($get_image){
+            $path = 'public/upload/sanpham/';
+            if($sanpham->hinhanh != NULL){
+                unlink($path.$sanpham->hinhanh);
+            }
+            $get_name_image = $get_image->getClientOriginalName();
+            $name_image = current(explode('.',$get_name_image));
+            $new_image = $name_image.rand(0,99).'.'.$get_image->getClientOriginalExtension();
+            $get_image ->move($path,$new_image);
 
-        $sanpham->hinhanh = $new_image;
+            $sanpham->hinhanh = $new_image;
+            }
+            
+            $sanpham->save();
+            return redirect()->back()->with('status','Thêm sản phẩm thành công');
         }
-        
-        $sanpham->save();
-        return redirect()->back()->with('status','Thêm sản phẩm thành công');
+        else{
+            return view('admincp.loginadmin');
+        }
+
     }
 
     /**
@@ -169,12 +236,22 @@ class SanphamController extends Controller
      */
     public function destroy($id)
     {
-        $sanpham = Sanpham::find($id);
-        $path = 'public/upload/sanpham/';
-        if($sanpham->hinhanh != NULL){
-            unlink($path.$sanpham->hinhanh);
+        //Session admin check
+        $admin_account  = Session()->get('admin_name');
+        if($admin_account){
+            //xoa sp {loi}
+            $sanpham = Sanpham::find($id);
+            $path = 'public/upload/sanpham/';
+            if($sanpham->hinhanh != NULL){
+                unlink($path.$sanpham->hinhanh);
+            }
+            $sanpham->delete();
+            return redirect()->back()->with('status','Thêm sản phẩm thành công');
         }
-        $sanpham->delete();
-        return redirect()->back()->with('status','Thêm sản phẩm thành công');
+        else{
+            return view('admincp.loginadmin');
+        }
+
+        
     }
 }

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layoutsadmin.app')
 
 @section('content')
 
-@include('layouts.navadmin')
+@include('layoutsadmin.navadmin')
 
 <div class="container">
     <div class="row justify-content-center">
@@ -29,11 +29,11 @@
                             @csrf
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Tên sản phẩm</label>
-                                <input type="text" name="tensanpham" value="{{$sanpham->tensanpham}}" class="form-control" id="slug" onkeyup="ChangeToSlug();" aria-describedby="emailHelp" placeholder="Tên sản phẩm...">
+                                <input type="text" name="tensanpham" value="{{$sanpham->tensanpham}}" class="form-control" id="slug" onkeyup="ChangeToSlug();" placeholder="Tên sản phẩm...">
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Slug sản phẩm</label>
-                                <input type="text" name="slug_sanpham" value="{{$sanpham->slug_sanpham}}" class="form-control" id="convert_slug" aria-describedby="emailHelp" placeholder="Slug sản phẩm...">
+                                <input type="text" name="slug_sanpham" value="{{$sanpham->slug_sanpham}}" class="form-control" id="convert_slug" placeholder="Slug sản phẩm...">
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputEmail2" class="form-label">Mô tả sản phẩm</label>
@@ -43,8 +43,16 @@
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Hình ảnh</label>
-                                <input type="file" name="hinhanh" class="form-control-flie" aria-describedby="emailHelp">
+                                <input type="file" name="hinhanh" class="form-control-flie">
                                 <img src="{{asset('public/upload/sanpham/'.$sanpham->hinhanh)}}" width="200" height="160">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Đơn giá</label>
+                                <input type="text" name="dongia" value="{{$sanpham->slug_sanpham}}" class="form-control" placeholder="Đơn giá...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Số lượng</label>
+                                <input type="text" name="soluong" value="{{$sanpham->slug_sanpham}}" class="form-control" placeholder="Số lượng...">
                             </div>
                             <div class="mb-3">
                             <label for="exampleInputEmail3" class="form-label">Danh mục sản phẩm</label>
